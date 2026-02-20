@@ -18,7 +18,11 @@ __pycache__/
 
 # Build artifacts
 /dist/
-/build/
+build/
+CMakeCache.txt
+CMakeFiles/
+Makefile
+*.cmake
 
 # Logs
 *.log
