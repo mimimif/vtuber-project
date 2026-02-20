@@ -8,7 +8,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Add include directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# Add executable
-add_executable(MotionEngine src/main.cpp)
+# Find OpenCV
+find_package(OpenCV REQUIRED)
+message(STATUS "OpenCV library status:")
+message(STATUS "    version: ${OpenCV_VERSION}")
+message(STATUS "    libraries: ${OpenCV_LIBS}")
+message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
 
-# Example: target_link_libraries(MotionEngine PRIVATE SomeLibrary)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+# Add executable
+add_executable(MotionEngine 
+    src/main.cpp
+    src/camera_input.cpp
+)
+
+# Link OpenCV
+target_link_libraries(MotionEngine PRIVATE ${OpenCV_LIBS})
