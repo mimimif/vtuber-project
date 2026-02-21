@@ -6,7 +6,7 @@ export default function Rigging() {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-4 border-b border-gray-700 pb-2">
-                <h2 className="text-2xl font-bold">Bone & Blendshape Rigging</h2>
+                <h2 className="text-2xl font-bold">2D Deformer & Parameter Rigging</h2>
                 <div className="space-x-2">
                     <button className="bg-green-700 hover:bg-green-600 px-3 py-1.5 text-sm rounded transition-colors">Test Animation</button>
                     <button className="bg-blue-600 hover:bg-blue-500 px-3 py-1.5 text-sm font-medium rounded transition-colors">Export Rig</button>
