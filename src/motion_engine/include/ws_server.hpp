@@ -8,15 +8,10 @@
 namespace vtuber {
 namespace motion {
 
-struct MotionData {
-    std::string bone_name;
-    float rotation_x;
-    float rotation_y;
-    float rotation_z;
-    float rotation_w; // quaternion
-    float weight;     // for blendshapes
-    bool is_blendshape;
-};
+#include "face_tracker.hpp"
+
+namespace vtuber {
+namespace motion {
 
 class WSServerImpl;
 
@@ -29,7 +24,7 @@ public:
     void stop();
     
     // Broadcast data to all connected clients (OBS Plugin, Avatar Builder)
-    void broadcast_motion_data(const MotionData& data);
+    void broadcast_motion_data(const Avatar2DParams& data);
 
 private:
     std::unique_ptr<WSServerImpl> impl_;

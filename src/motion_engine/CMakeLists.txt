@@ -46,11 +46,19 @@ include_directories(
     ${websocketpp_SOURCE_DIR}
 )
 
+# Download Haar Cascade XML for face detection during config
+file(DOWNLOAD 
+    https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_alt2.xml 
+    ${CMAKE_BINARY_DIR}/haarcascade_frontalface_alt2.xml
+    SHOW_PROGRESS
+)
+
 # Add executable
 add_executable(MotionEngine 
     src/main.cpp
     src/camera_input.cpp
     src/ws_server.cpp
+    src/face_tracker.cpp
 )
 
 # Link OpenCV, Json, and Threads

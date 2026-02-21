@@ -1,5 +1,6 @@
 #include "camera_input.hpp"
 #include "ws_server.hpp"
+#include "face_tracker.hpp"
 #include <iostream>
 #include <opencv2/highgui.hpp>
 
@@ -19,28 +20,25 @@ int main() {
         return -1;
     }
 
-    std::cout << "Press 'ESC' in the preview window to exit." << std::endl;
+    vtuber::motion::FaceTracker tracker;
+    if (!tracker.initialize("haarcascade_frontalface_alt2.xml")) {
+        std::cerr << "Failed to initialize face tracker." << std::endl;
+    }
 
-    float fake_angle = 0.0f;
+    std::cout << "Press 'ESC' in the preview window to exit." << std::endl;
 
     while (camera.is_open()) {
         auto frame = camera.get_latest_frame();
         if (frame.is_valid) {
+            
+            // Extract 2D parameters
+            auto params = tracker.process_frame(frame.image, true);
+            
             // Display the current frame
-            cv::imshow("Motion Engine - Camera Input Preview", frame.image);
+            cv::imshow("Motion Engine - 2D Face Tracking Preview", frame.image);
             
-            // Broadcast simulated head rotation over WebSocket
-            vtuber::motion::MotionData data;
-            data.bone_name = "Head";
-            data.is_blendshape = false;
-            // Simulated simple rotation animation
-            fake_angle += 0.05f;
-            data.rotation_x = 0.0f;
-            data.rotation_y = std::sin(fake_angle) * 0.5f;
-            data.rotation_z = 0.0f;
-            data.rotation_w = std::cos(fake_angle) * 0.5f;
-            
-            ws_server.broadcast_motion_data(data);
+            // Broadcast parameters over WebSocket
+            ws_server.broadcast_motion_data(params);
         }
 
         // Wait a bit and check if ESC (27) was pressed

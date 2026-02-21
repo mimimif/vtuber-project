@@ -101,23 +101,19 @@ void WebSocketServer::stop() {
     is_running_ = false;
 }
 
-void WebSocketServer::broadcast_motion_data(const MotionData& data) {
+void WebSocketServer::broadcast_motion_data(const Avatar2DParams& data) {
     if (!is_running_) return;
 
     json j;
-    j["type"] = data.is_blendshape ? "blendshape" : "bone";
-    j["name"] = data.bone_name;
-    
-    if (data.is_blendshape) {
-        j["weight"] = data.weight;
-    } else {
-        j["rotation"] = {
-            {"x", data.rotation_x},
-            {"y", data.rotation_y},
-            {"z", data.rotation_z},
-            {"w", data.rotation_w}
-        };
-    }
+    j["type"] = "avatar_2d_params";
+    j["is_tracked"] = data.is_tracked;
+    j["param_angle_x"] = data.param_angle_x;
+    j["param_angle_y"] = data.param_angle_y;
+    j["param_angle_z"] = data.param_angle_z;
+    j["param_eye_l_open"] = data.param_eye_l_open;
+    j["param_eye_r_open"] = data.param_eye_r_open;
+    j["param_mouth_open_y"] = data.param_mouth_open_y;
+    j["param_body_angle_x"] = data.param_body_angle_x;
 
     impl_->broadcast(j.dump());
 }
