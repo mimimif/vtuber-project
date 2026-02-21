@@ -1,6 +1,42 @@
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Grid, Environment } from '@react-three/drei';
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
+import * as THREE from 'three';
+import { useMotion } from '../../contexts/MotionContext';
+
+function AvatarPreviewMesh() {
+    const meshRef = useRef<THREE.Mesh>(null);
+    const { motionData, isConnected } = useMotion();
+
+    useFrame(() => {
+        if (meshRef.current && isConnected && motionData.is_tracked) {
+            // Apply 2D tracking parameters to the 3D mesh for visual feedback
+            // Pitch (Up/Down)
+            meshRef.current.rotation.x = THREE.MathUtils.degToRad(motionData.param_angle_x);
+            // Yaw (Left/Right)
+            meshRef.current.rotation.y = THREE.MathUtils.degToRad(motionData.param_angle_y);
+            // Roll (Tilt)
+            meshRef.current.rotation.z = THREE.MathUtils.degToRad(motionData.param_angle_z);
+        }
+    });
+
+    return (
+        <mesh ref={meshRef} position={[0, 1, 0]}>
+            <boxGeometry args={[1, 1.5, 1]} />
+            <meshStandardMaterial color={isConnected && motionData.is_tracked ? "#10b981" : "#3b82f6"} />
+
+            {/* Eye indicators */}
+            <mesh position={[-0.25, 0.4, 0.51]}>
+                <planeGeometry args={[0.3, 0.2 * (isConnected ? motionData.param_eye_l_open : 1)]} />
+                <meshBasicMaterial color="#ffffff" />
+            </mesh>
+            <mesh position={[0.25, 0.4, 0.51]}>
+                <planeGeometry args={[0.3, 0.2 * (isConnected ? motionData.param_eye_r_open : 1)]} />
+                <meshBasicMaterial color="#ffffff" />
+            </mesh>
+        </mesh>
+    );
+}
 
 export default function ModelingCanvas() {
     return (
@@ -29,11 +65,7 @@ export default function ModelingCanvas() {
                         maxPolarAngle={Math.PI / 1.5}
                     />
 
-                    {/* Placeholder Mesh */}
-                    <mesh position={[0, 1, 0]}>
-                        <boxGeometry args={[1, 2, 1]} />
-                        <meshStandardMaterial color="#3b82f6" />
-                    </mesh>
+                    <AvatarPreviewMesh />
                 </Suspense>
             </Canvas>
         </div>

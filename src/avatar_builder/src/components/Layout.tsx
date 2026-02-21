@@ -6,6 +6,7 @@ import {
     LinkIcon,
     Cog6ToothIcon
 } from '@heroicons/react/24/outline';
+import { useMotion } from '../contexts/MotionContext';
 
 const navigation = [
     { name: 'Home', href: '/', icon: HomeIcon },
@@ -21,6 +22,7 @@ function classNames(...classes: string[]) {
 
 export default function Layout() {
     const location = useLocation();
+    const { isConnected } = useMotion();
 
     return (
         <div className="flex h-screen bg-gray-900 text-white">
@@ -54,6 +56,19 @@ export default function Layout() {
                             );
                         })}
                     </nav>
+                </div>
+
+                {/* Connection Status */}
+                <div className="p-4 border-t border-gray-700">
+                    <div className="flex items-center space-x-2">
+                        <div className={classNames(
+                            "w-3 h-3 rounded-full",
+                            isConnected ? "bg-green-500" : "bg-red-500"
+                        )}></div>
+                        <span className="text-sm text-gray-400">
+                            {isConnected ? 'Engine Connected' : 'Engine Disconnected'}
+                        </span>
+                    </div>
                 </div>
             </div>
 
